@@ -4,6 +4,7 @@ import { Engine } from '@/types/engine';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import ScanSimulator from './ScanSimulator';
+import { toast } from 'sonner';
 
 export default function EngineDetailClient({ id }: { id?: string }) {
   const [engine, setEngine] = useState<Engine | null>(null);
@@ -85,7 +86,7 @@ export default function EngineDetailClient({ id }: { id?: string }) {
         console.error('sync index engines error', err);
       }
     } else {
-      alert('Erreur lors de la sauvegarde');
+      toast.error('Erreur lors de la sauvegarde');
     }
   }
 

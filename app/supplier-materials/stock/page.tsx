@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function StockPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -35,7 +36,8 @@ export default function StockPage() {
     const json = await res.json();
     if (json?.ok) {
       setProducts((p) => p.map((x) => (x.id === id ? json.product : x)));
-    } else alert('Erreur');
+    } else 
+      toast.error('Erreur');
   }
 
   if (loading) return <div>Chargement...</div>;

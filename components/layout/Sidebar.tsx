@@ -1,5 +1,6 @@
 'use client';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   Home,
   Box,
@@ -9,42 +10,146 @@ import {
   LogOut,
   ChevronLeft,
 } from 'lucide-react';
+import { ZAxis } from 'recharts';
+import { useState } from 'react';
 
 type Props = {
   collapsed: boolean;
   onToggle: () => void;
 };
 
+interface NavItemType {
+  href: string;
+  icon: any;
+  label: string;
+  items?: NavItemType[];
+  collapsed?: boolean;
+}
+
+const extendedNavItems: NavItemType[] = [
+  {
+    href: '/supplier-materials',
+    icon: Box,
+    label: 'Fournisseurs - Matériaux',
+    items: [
+      {
+        href: '/supplier-materials/devis',
+        icon: Box,
+        label: 'Devis',
+      },
+      {
+        href: '/supplier-materials/products',
+        icon: Truck,
+        label: 'Products',
+      },
+      {
+        href: '/supplier-materials/settings',
+        icon: Settings,
+        label: 'Settings',
+      },
+      {
+        href: '/supplier-materials/stock',
+        icon: List,
+        label: 'Stock',
+      },
+    ],
+  },
+  {
+    href: '/supplier/engines',
+    icon: Truck,
+    label: 'Fournisseurs - Engins',
+    items: [
+      {
+        href: '/supplier/engines/fleet',
+        icon: Truck,
+        label: 'Fleet',
+      },
+      {
+        href: '/supplier/engines/maintenance',
+        icon: Settings,
+        label: 'Maintenance',
+      },
+    ],
+  },
+  {
+    href: '/promoter/index',
+    icon: List,
+    label: 'Promoteur - Index',
+    items: [
+      {
+        href: '/promoter/index/projects',
+        icon: List,
+        label: 'Projects',
+      },
+      {
+        href: '/promoter/index/reports',
+        icon: List,
+        label: 'Reports',
+      },
+    ],
+  },
+];
+
 function NavItem({
   href,
   icon: Icon,
   label,
+  items,
   collapsed,
-}: {
-  href: string;
-  icon: any;
-  label: string;
-  collapsed: boolean;
-}) {
+}: NavItemType & { collapsed: boolean }) {
+  const pathname = usePathname();
+  const isActive = pathname === href || pathname.startsWith(`${href}/`);
+  const [isExpanded, setIsExpanded] = useState(isActive);
+
+  const toggleExpand = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <li>
-      <Link
-        href={href}
-        className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 transition-all duration-200 group relative overflow-hidden"
-      >
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-0 group-hover:opacity-10 transition-opacity duration-200" />
-        <Icon className="w-5 h-5 text-slate-600 group-hover:text-indigo-600 transition-colors duration-200 relative z-10" />
-        {!collapsed && (
-          <span className="text-sm font-medium text-slate-700 group-hover:text-indigo-700 transition-colors duration-200 relative z-10">
-            {label}
-          </span>
+      <div className="relative group">
+        <Link
+          href={href}
+          className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 ${isActive ? 'bg-indigo-50' : 'hover:bg-slate-50'}`}
+        >
+          <Icon className={`w-5 h-5 ${isActive ? 'text-indigo-600' : 'text-slate-600'}`} />
+          {!collapsed && (
+            <span className={`text-sm font-medium ${isActive ? 'text-indigo-700' : 'text-slate-700'}`}>
+              {label}
+            </span>
+          )}
+          {items && items.length > 0 && !collapsed && (
+            <ChevronLeft 
+              className={`w-4 h-4 ml-auto transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+            />
+          )}
+        </Link>
+        {items && items.length > 0 && (
+          <button 
+            onClick={toggleExpand}
+            className="absolute inset-0 w-full"
+            aria-label={`Toggle ${label}`}
+          />
         )}
-      </Link>
+      </div>
+      {items && items.length > 0 && isExpanded && (
+        <ul className="pl-4 mt-1 space-y-1">
+          {items.map((item) => (
+            <NavItem
+              key={item.href}
+              {...item}
+              collapsed={collapsed}
+            />
+          ))}
+        </ul>
+      )}
     </li>
   );
 }
 
 export default function Sidebar({ collapsed, onToggle }: Props) {
+  
   return (
     <div className="h-screen flex flex-col justify-between bg-white border-r border-slate-200 shadow-sm">
       <div>
@@ -70,24 +175,13 @@ export default function Sidebar({ collapsed, onToggle }: Props) {
               label="Tableau de bord"
               collapsed={collapsed}
             />
-            <NavItem
-              href="/supplier/materials"
-              icon={Box}
-              label="Fournisseurs - Matériaux"
-              collapsed={collapsed}
-            />
-            <NavItem
-              href="/supplier/engines"
-              icon={Truck}
-              label="Fournisseurs - Engins"
-              collapsed={collapsed}
-            />
-            <NavItem
-              href="/promoter/index"
-              icon={List}
-              label="Promoteur - Index"
-              collapsed={collapsed}
-            />
+            {extendedNavItems.map((item) => (
+              <NavItem
+                key={item.href}
+                {...item}
+                collapsed={collapsed}
+              />
+            ))}
             <NavItem
               href="/inventory"
               icon={Truck}

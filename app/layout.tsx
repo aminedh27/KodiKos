@@ -2,6 +2,7 @@
 import './globals.css';
 import { ReactNode } from 'react';
 import Shell from '@/components//layout/Shell';
+import { Toaster } from 'sonner';
 
 export const metadata = {
   title: 'BTP Market Intelligence',
@@ -12,7 +13,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <body>
-        <div>{children}</div>
+        <Shell>{children}</Shell>
+<Toaster position="top-right" />
       </body>
     </html>
   );

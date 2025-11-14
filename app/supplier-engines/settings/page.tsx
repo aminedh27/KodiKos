@@ -2,13 +2,14 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function EnginesSettings() {
   const [company, setCompany] = useState('Location Engins SA');
   const [phone, setPhone] = useState('0555 11 22 33');
 
   function save() {
-    alert('Paramètres sauvegardés (mock)');
+    toast.success('Paramètres sauvegardés (mock)');
   }
 
   return (

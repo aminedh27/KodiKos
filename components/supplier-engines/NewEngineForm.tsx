@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Engine, EngineCategory } from '@/types/engine';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 const CATEGORIES: EngineCategory[] = [
   'Pelle',
@@ -32,7 +33,7 @@ export default function NewEngineForm() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const v = validate();
-    if (v) return alert(v);
+    if (v) return toast.error(v);
     setLoading(true);
     const engine: Engine = {
       id: crypto.randomUUID(),
@@ -54,7 +55,7 @@ export default function NewEngineForm() {
     if (json?.ok) {
       router.push('/supplier-engines/fleet');
     } else {
-      alert('Erreur création');
+      toast.error('Erreur création');
     }
   }
 

@@ -11,8 +11,8 @@ export default function Header({
   collapsed: boolean;
 }) {
   return (
-    <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40">
-      <div className="flex items-center gap-4 px-4 py-3 md:px-6 md:py-4">
+    <header className="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-40 w-full px-6">
+      <div className="flex items-center gap-4 py-3 md:py-4 w-full px-0">
         {/* Mobile menu button */}
         <button
           onClick={onToggleSidebar}
@@ -22,7 +22,7 @@ export default function Header({
         </button>
 
         {/* Search Bar */}
-        <div className="flex-1 max-w-2xl">
+        <div className="flex-1">
           <div className="relative group">
             <input
               type="search"

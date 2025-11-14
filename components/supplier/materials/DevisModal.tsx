@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function DevisModal({
   product,
@@ -56,7 +57,7 @@ export default function DevisModal({
           </Button>
           <Button
             onClick={() => {
-              alert('PDF mock généré (simulate)');
+              toast.success('PDF mock généré (simulate)');
             }}
           >
             Télécharger PDF

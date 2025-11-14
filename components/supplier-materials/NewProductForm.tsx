@@ -5,9 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'; // adapte le chemin si besoin
 import { Product, Unit } from '@/types/product';
 
+interface NewProductFormProps {
+  onSuccess?: () => void;
+}
+
 const UNIT_OPTIONS: Unit[] = ['kg', 'ton', 'm3', 'piece'];
 
-export default function NewProductForm() {
+export default function NewProductForm({ onSuccess }: NewProductFormProps) {
   const router = useRouter();
 
   const [name, setName] = useState('');
@@ -64,6 +68,7 @@ export default function NewProductForm() {
       }
 
       setSuccess('Produit créé avec succès');
+      handleSuccess();
       // small delay so user sees success
       setTimeout(() => {
         router.push('/supplier-materials/products');
@@ -76,10 +81,14 @@ export default function NewProductForm() {
     }
   }
 
+  const handleSuccess = () => {
+    if (onSuccess) onSuccess();
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white border rounded-md p-6 max-w-xl"
+      className="bg-white p-6 max-w-xl"
     >
       <h3 className="text-lg font-semibold mb-4">Ajouter un nouveau produit</h3>
 
@@ -154,13 +163,13 @@ export default function NewProductForm() {
 
         <div className="flex justify-end gap-2 pt-2">
           <Button
-            variant="ghost"
+            variant="outline"
             type="button"
             onClick={() => router.push('/supplier-materials/products')}
           >
             Annuler
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
             {loading ? 'Enregistrement...' : 'Ajouter le produit'}
           </Button>
         </div>

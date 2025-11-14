@@ -2,6 +2,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function SettingsPage() {
   const [name, setName] = useState('Mon dépôt');
@@ -9,7 +10,7 @@ export default function SettingsPage() {
   const [zones, setZones] = useState('Alger, Blida');
 
   function save() {
-    alert('Paramètres sauvegardés (mock).');
+    toast.success('Paramètres sauvegardés (mock).');
   }
 
   return (

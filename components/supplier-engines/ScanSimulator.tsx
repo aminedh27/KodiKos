@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 type Payload = {
   engineId?: string;
@@ -29,7 +30,7 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
     let action: 'start' | 'stop' | undefined;
 
     if (!t) {
-      alert('Entrez ou simulez un code (ex: ENGINE:e1 or MISSION:m1:start)');
+      toast.error('Entrez ou simulez un code (ex: ENGINE:e1 or MISSION:m1:start)');
       setLoading(false);
       return;
     }
@@ -46,7 +47,7 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
         if (parts[2] === 'start') action = 'start';
         if (parts[2] === 'stop') action = 'stop';
       } else {
-        alert('Format invalide. Use ENGINE:<id> or MISSION:<id>:start');
+        toast.error('Format invalide. Use ENGINE:<id> or MISSION:<id>:start');
         setLoading(false);
         return;
       }
@@ -120,10 +121,10 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
         return;
       }
 
-      alert('Aucune action traitée');
+      toast.error('Aucune action traitée');
     } catch (err: any) {
       console.error(err);
-      alert('Erreur: ' + (err.message || err));
+      toast.error('Erreur: ' + (err.message || err));
     } finally {
       setLoading(false);
     }

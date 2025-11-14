@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function EditProductModal({
   product,
@@ -45,7 +46,7 @@ export default function EditProductModal({
       onClose();
     } catch (err) {
       console.error(err);
-      alert('Erreur lors de la sauvegarde');
+      toast.error('Erreur lors de la sauvegarde');
     } finally {
       setSaving(false);
     }

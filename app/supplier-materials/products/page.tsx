@@ -5,10 +5,14 @@ import ProductsTable from '@/components/supplier-materials/ProductsTable';
 import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
+import NewProductForm from '@/components/supplier-materials/NewProductForm';
+import { toast } from 'sonner';
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [open, setOpen] = useState(false);
 
   async function fetchProducts() {
     setLoading(true);
@@ -33,12 +37,12 @@ export default function ProductsPage() {
     // for demo we'll navigate to product detail/edit page if exists
     // or just alert
     // example: router.push(`/supplier-materials/products/${product.id}`)
-    alert(`Modifier: ${product.name}`);
+    toast.success(`Modifier: ${product.name}`);
   }
 
   function handleDevis(product: Product) {
     // open devis modal or navigate
-    alert(`Générer devis pour: ${product.name}`);
+    toast.success(`Générer devis pour: ${product.name}`);
   }
 
   return (
@@ -46,12 +50,22 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Produits</h2>
         <div className="flex gap-2">
-          <Link
-            href="/supplier-materials/products/new"
-            className="inline-flex items-center px-3 py-2 rounded bg-indigo-600 text-white text-sm"
-          >
-            Ajouter produit
-          </Link>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="inline-flex items-center px-3 py-2 rounded bg-indigo-600 text-white text-sm">
+                Ajouter produit
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <NewProductForm 
+                onSuccess={() => {
+                  setOpen(false);
+                  fetchProducts(); // Refresh the product list
+                  toast.success('Produit ajouté avec succès');
+                }} 
+              />
+            </DialogContent>
+          </Dialog>
           <Button variant="outline" onClick={fetchProducts}>
             Rafraîchir
           </Button>
