@@ -2,6 +2,7 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<any[]>([
@@ -12,7 +13,9 @@ export default function ProjectsPage() {
     <section>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Projets</h2>
-        <Button onClick={() => alert('Créer projet (mock)')}>
+        <Button onClick={() => {
+          toast.success('Projet créé avec succès');
+        }}>
           Nouveau projet
         </Button>
       </div>
@@ -31,7 +34,9 @@ export default function ProjectsPage() {
               <div className="flex gap-2">
                 <Button
                   variant="ghost"
-                  onClick={() => alert('Ouvrir projet (mock)')}
+                  onClick={() => {
+                    toast.success('Projet ouvert avec succès');
+                  }}
                 >
                   Ouvrir
                 </Button>

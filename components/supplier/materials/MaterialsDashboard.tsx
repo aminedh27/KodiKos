@@ -6,6 +6,7 @@ import { Product } from '@/types/product';
 import ProductTable from './ProductTable';
 import EditProductModal from './EditProductModal';
 import DevisModal from './DevisModal';
+import { toast } from 'sonner';
 
 export default function MaterialsDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -39,7 +40,7 @@ export default function MaterialsDashboard() {
       );
       setEditProduct(null);
     } else {
-      alert('Erreur mise à jour');
+      toast.error('Erreur mise à jour');
     }
   }
 

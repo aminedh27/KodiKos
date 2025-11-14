@@ -1,16 +1,31 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import { Product } from '@/types/product';
+import NewProductForm from './NewProductForm';
+import ProductsTable from './ProductsTable';
 
 export default function ProductsOverview() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/products')
       .then((r) => r.json())
-      .then(setProducts);
+      .then((data) => {
+        setProducts(data);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) return (
+    <div className="flex flex-col items-center justify-center p-8">
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
+      <span className="text-sm text-slate-600">Chargement...</span>
+    </div>
+  );
 
   const total = products.length;
   const lowStock = products.filter((p) => p.stock <= 10).length;
@@ -30,21 +45,24 @@ export default function ProductsOverview() {
         </div>
       </div>
 
-      <div className="bg-white border rounded p-4">
-        <h3 className="font-medium mb-3">Derniers produits</h3>
-        <ul className="space-y-2">
-          {products.slice(0, 5).map((p) => (
-            <li key={p.id} className="flex justify-between items-center">
-              <div>
-                <div className="font-medium">{p.name}</div>
-                <div className="text-xs text-slate-500">{p.category}</div>
-              </div>
-              <div className="text-sm text-slate-600">
-                {p.price.toLocaleString()} DA
-              </div>
-            </li>
-          ))}
-        </ul>
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Derniers produits</h2>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                Ajouter produit
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[600px]">
+              <NewProductForm onSuccess={() => setOpen(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
+        
+        <div className="border rounded-lg overflow-hidden">
+          <ProductsTable products={products} loading={false} />
+        </div>
       </div>
     </div>
   );

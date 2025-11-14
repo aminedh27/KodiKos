@@ -1,11 +1,9 @@
 // app/supplier-materials/page.tsx
+import { redirect } from 'next/navigation';
 import ProductsOverview from '@/components/supplier-materials/ProductsOverview';
 import React from 'react';
 
 export default function Page() {
-  return (
-    <section className="space-y-6">
-      <ProductsOverview />
-    </section>
-  );
+  // Redirect to default sub-page
+  redirect('/supplier-materials/products');
 }

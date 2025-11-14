@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Mission } from '@/types/mission';
 import { Button } from '@/components/ui/button';
 import ScanSimulator from '@/components/supplier-engines/ScanSimulator';
+import { toast } from 'sonner';
 
 export default function MissionsPage() {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -44,7 +45,7 @@ export default function MissionsPage() {
 
   async function createMission() {
     if (!engineId || !client) {
-      alert('Sélectionner engin et client');
+      toast.warning('Sélectionner engin et client');
       return;
     }
     const mission = { engineId, client, status: 'planned' };
@@ -58,7 +59,7 @@ export default function MissionsPage() {
       setClient('');
       setEngineId('');
       fetchAll();
-    } else alert('Erreur création mission');
+    } else toast.error('Erreur création mission');
   }
 
   async function startMission(id: string) {
@@ -69,7 +70,7 @@ export default function MissionsPage() {
     });
     const json = await res.json();
     if (json?.ok) fetchAll();
-    else alert('Erreur démarrage');
+    else toast.error('Erreur démarrage');
   }
 
   async function stopMission(id: string) {
@@ -80,7 +81,7 @@ export default function MissionsPage() {
     });
     const json = await res.json();
     if (json?.ok) fetchAll();
-    else alert('Erreur arrêt');
+    else toast.error('Erreur arrêt');
   }
 
   return (
