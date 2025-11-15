@@ -14,9 +14,15 @@ export default function CompareResults({
   useEffect(() => {
     async function fetchSelected() {
       try {
-        const res = await fetch('/api/index/materials');
+        const res = await fetch('/api/index/materials', { cache: 'no-store' });
         const data = await res.json();
-        const arr = Array.isArray(data) ? data : [];
+        const arr = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
+          ? data
+          : Array.isArray(data?.item)
+          ? data.item
+          : [];
         setItems(arr.filter((a: any) => ids.includes(a.id)));
       } catch (err) {
         setItems([]);

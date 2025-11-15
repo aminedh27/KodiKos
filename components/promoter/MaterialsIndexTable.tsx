@@ -36,17 +36,15 @@ export default function MaterialsIndexTable() {
     async function fetchIndex() {
       setLoading(true);
       try {
-        const res = await fetch('/api/index/materials');
+        const res = await fetch('/api/index/materials', { cache: 'no-store' });
         const data = await res.json();
-        // normalize: if API returns { ok: true, item } or array
-        const arr = Array.isArray(data)
+        // normalize: prefer { items } from API, fallback to other shapes
+        const arr = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
           ? data
           : Array.isArray(data?.item)
           ? data.item
-          : data?.ok
-          ? data.item
-            ? [data.item]
-            : []
           : [];
         setItems(arr as IndexMaterial[]);
       } catch (err) {

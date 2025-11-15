@@ -11,9 +11,30 @@ export default function ComparePicker() {
   useEffect(() => {
     async function fetchIndex() {
       try {
-        const res = await fetch('/api/index/materials');
+        const res = await fetch('/api/index/materials', { cache: 'no-store' });
         const data = await res.json();
-        setItems(Array.isArray(data) ? data : []);
+        const arr = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
+          ? data
+          : Array.isArray(data?.item)
+          ? data.item
+          : [];
+        setItems(arr);
+
+        // preselect from URL query (?ids=a,b,c)
+        const usp = new URLSearchParams(location.search);
+        const idsParam = usp.get('ids') ?? '';
+        if (idsParam) {
+          const ids = idsParam
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean);
+          // only keep ids that exist in items
+          const existing = new Set(arr.map((x: any) => x.id));
+          setSelected(ids.filter((id) => existing.has(id)).slice(0, 5));
+          setShowResults(ids.length >= 2);
+        }
       } catch (err) {
         setItems([]);
       }

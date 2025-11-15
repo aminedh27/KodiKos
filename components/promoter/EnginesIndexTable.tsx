@@ -37,9 +37,11 @@ export default function EnginesIndexTable() {
     async function fetchIndex() {
       setLoading(true);
       try {
-        const res = await fetch('/api/index/engines');
+        const res = await fetch('/api/index/engines', { cache: 'no-store' });
         const data = await res.json();
-        const arr = Array.isArray(data)
+        const arr = Array.isArray(data?.items)
+          ? data.items
+          : Array.isArray(data)
           ? data
           : Array.isArray(data?.item)
           ? data.item
