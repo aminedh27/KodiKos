@@ -10,9 +10,10 @@ let PRODUCTS: Product[] = [
     unit: 'ton',
     price: 8500,
     stock: 120,
-    updatedAt: new Date().toISOString(),
+    updatedat: new Date().toISOString(),
     quantity: 120,
     min_quantity: 120,
+    transport_price: 0,
   },
   {
     id: 'p2',
@@ -21,9 +22,10 @@ let PRODUCTS: Product[] = [
     unit: 'ton',
     price: 99000,
     stock: 25,
-    updatedAt: new Date().toISOString(),
+    updatedat: new Date().toISOString(),
     quantity: 25,
     min_quantity: 25,
+    transport_price: 0,
   },
   {
     id: 'p3',
@@ -32,9 +34,10 @@ let PRODUCTS: Product[] = [
     unit: 'm3',
     price: 2000,
     stock: 500,
-    updatedAt: new Date().toISOString(),
+    updatedat: new Date().toISOString(),
     quantity: 500,
     min_quantity: 500,
+    transport_price: 0,
   },
 ];
 

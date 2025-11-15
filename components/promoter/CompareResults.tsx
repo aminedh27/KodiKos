@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { listMaterialIndex } from '@/app/services/material_index';
 
 export default function CompareResults({
   ids,
@@ -14,16 +15,16 @@ export default function CompareResults({
   useEffect(() => {
     async function fetchSelected() {
       try {
-        const res = await fetch('/api/index/materials', { cache: 'no-store' });
-        const data = await res.json();
-        const arr = Array.isArray(data?.items)
-          ? data.items
-          : Array.isArray(data)
-          ? data
-          : Array.isArray(data?.item)
-          ? data.item
-          : [];
-        setItems(arr.filter((a: any) => ids.includes(a.id)));
+        const rows = await listMaterialIndex();
+        const mapped = rows.map((r) => ({
+          id: r.productId,
+          supplierId: undefined,
+          price: r.avg_price,
+          unit: r.unit,
+          updatedAt: r.updatedAt,
+          notes: undefined,
+        }));
+        setItems(mapped.filter((a: any) => ids.includes(a.id)));
       } catch (err) {
         setItems([]);
       }

@@ -55,6 +55,8 @@ import {
   X,
   Search,
 } from 'lucide-react';
+import { searchProducts } from '@/app/services/products';
+import { listDevis, createDevis as createDevisSvc } from '@/app/services/devis';
 
 const CLIENTS = [
   {
@@ -122,8 +124,8 @@ export default function DevisPage() {
   async function fetchProducts() {
     setLoading(true);
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
+      const res = await searchProducts('');
+      const data = await res;
       setProducts(data);
     } catch (err) {
       console.error('fetch products error', err);
@@ -136,9 +138,17 @@ export default function DevisPage() {
   async function fetchDevis() {
     setLoadingDevis(true);
     try {
-      const res = await fetch('/api/devis');
-      const data = await res.json();
-      setDevis(data);
+      const rows = await listDevis();
+      // Map to UI shape expected by this page
+      const mapped = rows.map((d) => ({
+        id: d.id,
+        client: d.client_name,
+        clientPhone: d.client_phone,
+        total: d.total,
+        createdAt: d.created_at,
+        items: d.items,
+      }));
+      setDevis(mapped);
     } catch (err) {
       console.error('fetch devis error', err);
     } finally {
@@ -203,26 +213,21 @@ export default function DevisPage() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/devis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          client: selectedClient.name,
-          items,
-          total: calculateTotal(),
-          notes,
-          validityDays,
-        }),
-      });
-      const json = await res.json();
-
-      if (json?.ok) {
-        resetForm();
-        fetchDevis();
-        toast.success('Devis créé avec succès');
-      } else {
-        toast.error('Erreur lors de la création du devis');
-      }
+      const payload = {
+        client_name: selectedClient.name,
+        client_phone: selectedClient.phone,
+        total: calculateTotal(),
+        items: items.map((it) => ({
+          product_id: it.productId,
+          quantity: it.quantity,
+          unit_price: it.price,
+          subtotal: it.quantity * it.price,
+        })),
+      };
+      await createDevisSvc(payload);
+      resetForm();
+      fetchDevis();
+      toast.success('Devis créé avec succès');
     } catch (err) {
       console.error('create devis error', err);
       toast.error('Erreur lors de la création du devis');
@@ -643,7 +648,7 @@ export default function DevisPage() {
                   <p className="text-slate-600">Aucun produit trouvé</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 p-2">
+                <div className="grid grid-cols-2 gap-2 p-2 overflow-y-scroll">
                   {filteredProducts.map((product) => (
                     <div
                       key={product.id}

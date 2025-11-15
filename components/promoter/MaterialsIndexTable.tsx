@@ -1,6 +1,7 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { listMaterialIndex } from '@/app/services/material_index';
 
 type IndexMaterial = {
   id: string;
@@ -36,17 +37,20 @@ export default function MaterialsIndexTable() {
     async function fetchIndex() {
       setLoading(true);
       try {
-        const res = await fetch('/api/index/materials', { cache: 'no-store' });
-        const data = await res.json();
-        // normalize: prefer { items } from API, fallback to other shapes
-        const arr = Array.isArray(data?.items)
-          ? data.items
-          : Array.isArray(data)
-          ? data
-          : Array.isArray(data?.item)
-          ? data.item
-          : [];
-        setItems(arr as IndexMaterial[]);
+        const rows = await listMaterialIndex();
+        // Map to local shape (IndexMaterial)
+        const mapped = rows.map((r) => ({
+          id: r.productId, // use product id as row id for routing/details
+          name: r.name,
+          category: r.category,
+          price: r.avg_price,
+          unit: r.unit,
+          supplierId: undefined,
+          city: undefined,
+          updatedAt: r.updatedAt,
+          notes: undefined,
+        }));
+        setItems(mapped);
       } catch (err) {
         console.error(err);
         setItems([]);

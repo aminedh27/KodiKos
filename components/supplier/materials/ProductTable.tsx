@@ -41,7 +41,7 @@ export default function ProductTable({
               {p.stock} {p.unit}
             </td>
             <td className="py-3 text-slate-500">
-              {new Date(p.updatedAt).toLocaleString()}
+              {new Date(p.updatedat).toLocaleString()}
             </td>
             <td className="py-3 text-right">
               <div className="flex justify-end gap-2">
