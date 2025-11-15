@@ -51,6 +51,8 @@ export default function NewProductForm({ onSuccess }: NewProductFormProps) {
       price: Number(price),
       stock: Number(stock),
       updatedAt: new Date().toISOString(),
+      quantity: Number(stock),
+      min_quantity: Number(stock),
     };
 
     try {
