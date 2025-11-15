@@ -62,6 +62,8 @@ export default function MaterialsDashboard() {
                 stock: 0,
                 unit: 'ton',
                 updatedAt: new Date().toISOString(),
+                quantity: 0,
+                min_quantity: 0,
               })
             }
           >
