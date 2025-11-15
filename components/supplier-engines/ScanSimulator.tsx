@@ -1,7 +1,28 @@
 'use client';
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  QrCode,
+  Scan,
+  Truck,
+  Play,
+  Square,
+  CheckCircle2,
+  AlertCircle,
+  Loader2,
+  X,
+} from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type Payload = {
   engineId?: string;
@@ -17,25 +38,66 @@ type Props = {
 export default function ScanSimulator({ onClose, onResult }: Props) {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
 
-  function simulateForEngine(engineId: string) {
-    setText(`ENGINE:${engineId}`);
+  const quickActions = [
+    {
+      label: 'Engin E1',
+      value: 'ENGINE:e1',
+      color: 'bg-slate-100 hover:bg-slate-200',
+      icon: Truck,
+    },
+    {
+      label: 'Engin E2',
+      value: 'ENGINE:e2',
+      color: 'bg-slate-100 hover:bg-slate-200',
+      icon: Truck,
+    },
+    {
+      label: 'Start E1',
+      value: 'ENGINE:e1:start',
+      color: 'bg-green-50 hover:bg-green-100 text-green-700',
+      icon: Play,
+    },
+    {
+      label: 'Stop E1',
+      value: 'ENGINE:e1:stop',
+      color: 'bg-red-50 hover:bg-red-100 text-red-700',
+      icon: Square,
+    },
+    {
+      label: 'Mission M1',
+      value: 'MISSION:m1:start',
+      color: 'bg-amber-50 hover:bg-amber-100 text-amber-700',
+      icon: CheckCircle2,
+    },
+  ];
+
+  function simulateCode(value: string) {
+    setText(value);
+    setError('');
+    setSuccess(false);
   }
 
   async function submit() {
     setLoading(true);
+    setError('');
+    setSuccess(false);
+
     const t = text.trim();
     let engineId: string | undefined;
     let missionId: string | undefined;
     let action: 'start' | 'stop' | undefined;
 
     if (!t) {
-      toast.error('Entrez ou simulez un code (ex: ENGINE:e1 or MISSION:m1:start)');
+      setError('Veuillez entrer ou sélectionner un code QR');
       setLoading(false);
       return;
     }
 
     try {
+      // Parse QR code format
       if (t.startsWith('ENGINE:')) {
         const parts = t.split(':');
         engineId = parts[1];
@@ -47,12 +109,12 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
         if (parts[2] === 'start') action = 'start';
         if (parts[2] === 'stop') action = 'stop';
       } else {
-        toast.error('Format invalide. Use ENGINE:<id> or MISSION:<id>:start');
+        setError('Format invalide. Utilisez ENGINE:<id> ou MISSION:<id>:start');
         setLoading(false);
         return;
       }
 
-      // If missionId + action -> call start/stop
+      // Handle mission with action
       if (missionId && action) {
         const res = await fetch('/api/missions', {
           method: 'POST',
@@ -63,15 +125,24 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
           }),
         });
         const json = await res.json();
-        if (!json?.ok) throw new Error(json?.message || 'Erreur API missions');
-        onResult?.({ engineId, missionId, action });
-        onClose();
+
+        if (!json?.ok) {
+          throw new Error(
+            json?.message || 'Erreur lors de la mise à jour de la mission'
+          );
+        }
+
+        setSuccess(true);
+        setTimeout(() => {
+          onResult?.({ engineId, missionId, action });
+          onClose();
+        }, 1500);
         return;
       }
 
-      // If engineId + action -> create mission then start/stop accordingly
+      // Handle engine with action
       if (engineId && action) {
-        // create mission
+        // Create mission
         const create = await fetch('/api/missions', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -81,10 +152,14 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
           }),
         });
         const createJson = await create.json();
-        if (!createJson?.ok) throw new Error('Erreur création mission');
+
+        if (!createJson?.ok) {
+          throw new Error('Erreur lors de la création de la mission');
+        }
+
         const mid = createJson.mission.id;
 
-        // if start requested, start it
+        // Start mission if requested
         if (action === 'start') {
           const startRes = await fetch('/api/missions', {
             method: 'POST',
@@ -92,15 +167,21 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
             body: JSON.stringify({ action: 'start', id: mid }),
           });
           const startJson = await startRes.json();
-          if (!startJson?.ok) throw new Error('Erreur démarrage mission');
+
+          if (!startJson?.ok) {
+            throw new Error('Erreur lors du démarrage de la mission');
+          }
         }
 
-        onResult?.({ engineId, missionId: mid, action });
-        onClose();
+        setSuccess(true);
+        setTimeout(() => {
+          onResult?.({ engineId, missionId: mid, action });
+          onClose();
+        }, 1500);
         return;
       }
 
-      // If engineId && no action -> create planned mission only
+      // Handle engine without action (create planned mission)
       if (engineId && !action) {
         const create = await fetch('/api/missions', {
           method: 'POST',
@@ -111,89 +192,202 @@ export default function ScanSimulator({ onClose, onResult }: Props) {
           }),
         });
         const createJson = await create.json();
-        if (!createJson?.ok) throw new Error('Erreur création mission');
-        onResult?.({
-          engineId,
-          missionId: createJson.mission.id,
-          action: 'start',
-        });
-        onClose();
+
+        if (!createJson?.ok) {
+          throw new Error('Erreur lors de la création de la mission');
+        }
+
+        setSuccess(true);
+        setTimeout(() => {
+          onResult?.({
+            engineId,
+            missionId: createJson.mission.id,
+            action: 'start',
+          });
+          onClose();
+        }, 1500);
         return;
       }
 
-      toast.error('Aucune action traitée');
+      setError('Action non reconnue');
     } catch (err: any) {
       console.error(err);
-      toast.error('Erreur: ' + (err.message || err));
+      setError(err.message || 'Une erreur est survenue');
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-6">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-md w-full max-w-md p-6 shadow-lg">
-        <h3 className="text-lg font-medium mb-3">Simulateur de scan QR</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
 
-        <div className="mb-3">
-          <div className="text-sm text-slate-600 mb-2">Simulations rapides</div>
-          <div className="flex gap-2 flex-wrap">
-            <button
-              type="button"
-              onClick={() => simulateForEngine('e1')}
-              className="px-3 py-1 rounded bg-slate-100 text-sm"
-            >
-              ENGINE:e1
-            </button>
-            <button
-              type="button"
-              onClick={() => simulateForEngine('e2')}
-              className="px-3 py-1 rounded bg-slate-100 text-sm"
-            >
-              ENGINE:e2
-            </button>
-            <button
-              type="button"
-              onClick={() => setText('ENGINE:e1:start')}
-              className="px-3 py-1 rounded bg-indigo-50 text-sm"
-            >
-              Start e1
-            </button>
-            <button
-              type="button"
-              onClick={() => setText('ENGINE:e1:stop')}
-              className="px-3 py-1 rounded bg-amber-50 text-sm"
-            >
-              Stop e1
-            </button>
-            <button
-              type="button"
-              onClick={() => setText('MISSION:m1:start')}
-              className="px-3 py-1 rounded bg-emerald-50 text-sm"
-            >
-              Start mission m1
-            </button>
+      {/* Modal */}
+      <Card className="relative w-full max-w-lg shadow-2xl animate-in fade-in zoom-in duration-200">
+        <CardHeader className="relative">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-4 top-4 h-8 w-8"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 shadow-lg shadow-amber-500/30">
+              <QrCode className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <CardTitle className="text-xl">Scanner QR Code</CardTitle>
+              <CardDescription>
+                Démarrez ou arrêtez une mission rapidement
+              </CardDescription>
+            </div>
           </div>
-        </div>
+        </CardHeader>
 
-        <label className="text-sm block mb-1">Code scanné</label>
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          className="w-full border rounded px-3 py-2 mb-4"
-          placeholder="ENGINE:e1 or MISSION:m1:start"
-        />
+        <CardContent className="space-y-6">
+          {/* Success Alert */}
+          {success && (
+            <Alert className="border-green-200 bg-green-50">
+              <CheckCircle2 className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800 font-medium">
+                Action réalisée avec succès !
+              </AlertDescription>
+            </Alert>
+          )}
 
-        <div className="flex justify-end gap-2">
-          <Button variant="ghost" onClick={onClose}>
-            Annuler
-          </Button>
-          <Button onClick={submit} disabled={loading}>
-            {loading ? 'Traitement...' : 'Valider scan'}
-          </Button>
-        </div>
-      </div>
+          {/* Error Alert */}
+          {error && (
+            <Alert className="border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                {error}
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* Quick Actions */}
+          <div className="space-y-3">
+            <Label className="text-sm font-medium text-slate-700">
+              Actions Rapides
+            </Label>
+            <div className="grid grid-cols-2 gap-2">
+              {quickActions.map((action) => {
+                const Icon = action.icon;
+                return (
+                  <Button
+                    key={action.value}
+                    type="button"
+                    variant="outline"
+                    onClick={() => simulateCode(action.value)}
+                    disabled={loading}
+                    className={`h-auto py-3 flex-col gap-2 ${action.color} border transition-all`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="text-xs font-medium">{action.label}</span>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Manual Input */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="qr-code"
+              className="text-sm font-medium text-slate-700"
+            >
+              Code QR Scanné
+            </Label>
+            <div className="relative">
+              <Scan className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                id="qr-code"
+                value={text}
+                onChange={(e) => {
+                  setText(e.target.value);
+                  setError('');
+                  setSuccess(false);
+                }}
+                disabled={loading}
+                className="pl-10"
+                placeholder="ENGINE:e1 ou MISSION:m1:start"
+              />
+            </div>
+            <p className="text-xs text-slate-500">
+              Format: ENGINE:&lt;id&gt;[:action] ou
+              MISSION:&lt;id&gt;:&lt;action&gt;
+            </p>
+          </div>
+
+          {/* Format Examples */}
+          <div className="p-4 rounded-lg bg-slate-50 border border-slate-200">
+            <p className="text-xs font-semibold text-slate-700 mb-2">
+              Formats acceptés:
+            </p>
+            <div className="space-y-1 text-xs text-slate-600">
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  ENGINE:e1
+                </Badge>
+                <span>Créer mission planifiée</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  ENGINE:e1:start
+                </Badge>
+                <span>Créer et démarrer mission</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  MISSION:m1:start
+                </Badge>
+                <span>Démarrer mission existante</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="font-mono text-[10px]">
+                  MISSION:m1:stop
+                </Badge>
+                <span>Terminer mission</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={onClose}
+              disabled={loading}
+              className="flex-1"
+            >
+              Annuler
+            </Button>
+            <Button
+              onClick={submit}
+              disabled={loading || !text.trim()}
+              className="flex-1 bg-amber-600 hover:bg-amber-700"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Traitement...
+                </>
+              ) : (
+                <>
+                  <Scan className="w-4 h-4 mr-2" />
+                  Valider Scan
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

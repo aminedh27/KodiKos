@@ -65,19 +65,61 @@ const ENGINES_SEED = [
   },
 ];
 
-export async function GET() {
-  // forward the seed to the index POST handlers programmatically
+export async function GET(request: Request) {
+  // Call the index POST endpoints on the same origin to actually seed the in-memory stores
   try {
-    // call the materials and engines POST endpoints internally (so they fill the in-memory arrays)
-    // Note: we use absolute paths because calling internal route functions directly is not trivial here.
-    // For simplicity, return the arrays and instruct user to POST them if needed.
+    const url = new URL(request.url);
+    const origin = `${url.protocol}//${url.host}`;
+
+    const matsRes = await fetch(`${origin}/api/index/materials`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(MATERIALS_SEED),
+      cache: 'no-store',
+    });
+
+    if (!matsRes.ok) {
+      const msg = await safeText(matsRes);
+      throw new Error(`Seeding materials failed: ${matsRes.status} ${msg}`);
+    }
+
+    const engRes = await fetch(`${origin}/api/index/engines`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(ENGINES_SEED),
+      cache: 'no-store',
+    });
+
+    if (!engRes.ok) {
+      const msg = await safeText(engRes);
+      throw new Error(`Seeding engines failed: ${engRes.status} ${msg}`);
+    }
+
+    const matsJson = await matsRes.json().catch(() => ({}));
+    const engJson = await engRes.json().catch(() => ({}));
+
     return NextResponse.json({
       ok: true,
-      materials: MATERIALS_SEED,
-      engines: ENGINES_SEED,
+      materialsSeeded: Array.isArray(MATERIALS_SEED)
+        ? MATERIALS_SEED.length
+        : 0,
+      enginesSeeded: Array.isArray(ENGINES_SEED) ? ENGINES_SEED.length : 0,
+      materials: matsJson?.items ?? null,
+      engines: engJson?.items ?? null,
     });
   } catch (err) {
     console.error('seed error', err);
-    return NextResponse.json({ ok: false }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: (err as Error).message },
+      { status: 500 }
+    );
+  }
+}
+
+async function safeText(res: Response) {
+  try {
+    return await res.text();
+  } catch (_) {
+    return '';
   }
 }

@@ -13,8 +13,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr">
       <body>
-        <Shell>{children}</Shell>
-<Toaster position="top-right" />
+        {children}
+        <Toaster position="top-right" />
       </body>
     </html>
   );
