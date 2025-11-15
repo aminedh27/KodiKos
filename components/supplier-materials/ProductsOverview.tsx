@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Product } from '@/types/product';
+import { searchProducts } from '@/app/services/products';
+import { listDevis } from '@/app/services/devis';
 import {
   Package,
   TrendingUp,
@@ -27,18 +29,29 @@ import { Progress } from '@/components/ui/progress';
 export default function ProductsOverview() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [devisCount, setDevisCount] = useState(0);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then((r) => r.json())
-      .then((data) => {
+    async function load() {
+      setLoading(true);
+      try {
+        const data = await searchProducts('');
         setProducts(data);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch (e) {
         setProducts([]);
+      } finally {
         setLoading(false);
-      });
+      }
+
+      // load devis count (non-blocking)
+      try {
+        const rows = await listDevis();
+        setDevisCount(rows.length);
+      } catch (e) {
+        setDevisCount(0);
+      }
+    }
+    load();
   }, []);
 
   if (loading)
@@ -50,8 +63,11 @@ export default function ProductsOverview() {
     );
 
   const total = products.length;
-  const lowStock = products.filter((p) => p.stock <= 10).length;
-  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
+  const lowStock = products.filter((p) => Number(p.quantity) <= 10).length;
+  const totalValue = products.reduce(
+    (sum, p) => sum + Number(p.price) * Number(p.quantity),
+    0
+  );
   const avgPrice =
     products.length > 0
       ? products.reduce((sum, p) => sum + p.price, 0) / products.length
@@ -78,7 +94,7 @@ export default function ProductsOverview() {
     },
     {
       title: 'Devis Générés',
-      value: 28,
+      value: devisCount,
       change: '+8',
       trend: 'up',
       icon: FileText,
@@ -97,7 +113,11 @@ export default function ProductsOverview() {
   ];
 
   const topProducts = products
-    .sort((a, b) => b.price * b.stock - a.price * a.stock)
+    .sort(
+      (a, b) =>
+        Number(b.price) * Number(b.quantity) -
+        Number(a.price) * Number(a.quantity)
+    )
     .slice(0, 5);
 
   const categoryStats = products.reduce((acc, p) => {
@@ -105,7 +125,7 @@ export default function ProductsOverview() {
       acc[p.category] = { count: 0, value: 0 };
     }
     acc[p.category].count += 1;
-    acc[p.category].value += p.price * p.stock;
+    acc[p.category].value += Number(p.price) * Number(p.quantity);
     return acc;
   }, {} as Record<string, { count: number; value: number }>);
 
@@ -192,9 +212,10 @@ export default function ProductsOverview() {
           <CardContent>
             <div className="space-y-4">
               {topProducts.map((product, index) => {
-                const stockValue = product.price * product.stock;
-                const stockPercentage = (product.stock / 100) * 100; // Mock comparison
-                const isLowStock = product.stock <= 10;
+                const stockValue =
+                  Number(product.price) * Number(product.quantity);
+                const stockPercentage = (Number(product.quantity) / 100) * 100; // placeholder
+                const isLowStock = Number(product.quantity) <= 10;
 
                 return (
                   <div
@@ -227,7 +248,7 @@ export default function ProductsOverview() {
                           className="flex-1 h-1.5"
                         />
                         <span className="text-xs text-slate-600 font-medium">
-                          {product.stock} unités
+                          {product.quantity} unités
                         </span>
                       </div>
                     </div>
@@ -237,7 +258,7 @@ export default function ProductsOverview() {
                         {stockValue.toLocaleString()} DA
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
-                        {product.price.toLocaleString()} DA/u
+                        {Number(product.price).toLocaleString()} DA/u
                       </p>
                     </div>
                   </div>
@@ -317,7 +338,7 @@ export default function ProductsOverview() {
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {products
-                .filter((p) => p.stock <= 10)
+                .filter((p) => Number(p.quantity) <= 10)
                 .slice(0, 6)
                 .map((product) => (
                   <div
@@ -336,7 +357,8 @@ export default function ProductsOverview() {
                         variant="outline"
                         className="mt-1 text-[10px] border-amber-300 text-amber-700"
                       >
-                        {product.stock} restant{product.stock > 1 ? 's' : ''}
+                        {product.quantity} restant
+                        {Number(product.quantity) > 1 ? 's' : ''}
                       </Badge>
                     </div>
                   </div>
@@ -422,10 +444,10 @@ export default function ProductsOverview() {
                   {product.category}
                 </p>
                 <p className="text-sm font-bold text-indigo-600">
-                  {product.price.toLocaleString()} DA
+                  {Number(product.price).toLocaleString()} DA
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Stock: {product.stock}
+                  Stock: {product.quantity}
                 </p>
               </div>
             ))}

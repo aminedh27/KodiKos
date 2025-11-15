@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import CompareResults from './CompareResults';
+import { listMaterialIndex } from '@/app/services/material_index';
 
 export default function ComparePicker() {
   const [items, setItems] = useState<any[]>([]);
@@ -11,16 +12,16 @@ export default function ComparePicker() {
   useEffect(() => {
     async function fetchIndex() {
       try {
-        const res = await fetch('/api/index/materials', { cache: 'no-store' });
-        const data = await res.json();
-        const arr = Array.isArray(data?.items)
-          ? data.items
-          : Array.isArray(data)
-          ? data
-          : Array.isArray(data?.item)
-          ? data.item
-          : [];
-        setItems(arr);
+        const rows = await listMaterialIndex();
+        const mapped = rows.map((r) => ({
+          id: r.productId,
+          name: r.name,
+          category: r.category,
+          unit: r.unit,
+          price: r.avg_price,
+          supplierId: undefined,
+        }));
+        setItems(mapped as any[]);
 
         // preselect from URL query (?ids=a,b,c)
         const usp = new URLSearchParams(location.search);
@@ -31,7 +32,7 @@ export default function ComparePicker() {
             .map((s) => s.trim())
             .filter(Boolean);
           // only keep ids that exist in items
-          const existing = new Set(arr.map((x: any) => x.id));
+          const existing = new Set(mapped.map((x: any) => x.id));
           setSelected(ids.filter((id) => existing.has(id)).slice(0, 5));
           setShowResults(ids.length >= 2);
         }

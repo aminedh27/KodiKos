@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button'; // adapte le chemin si besoin
 import { Product, Unit } from '@/types/product';
+import { createProduct } from '@/app/services/products';
 
 interface NewProductFormProps {
   onSuccess?: () => void;
@@ -50,21 +51,18 @@ export default function NewProductForm({ onSuccess }: NewProductFormProps) {
       unit,
       price: Number(price),
       stock: Number(stock),
-      updatedAt: new Date().toISOString(),
+      updatedat: new Date().toISOString(),
       quantity: Number(stock),
+      transport_price: 0,
       min_quantity: Number(stock),
     };
 
     try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'create', product: newProduct }),
-      });
+      const res = await createProduct(newProduct);
 
-      const json = await res.json();
-      if (!res.ok) {
-        setError(json?.message || 'Erreur lors de la création');
+      const json = await res;
+      if (!res) {
+        setError('Erreur lors de la création');
         setLoading(false);
         return;
       }
@@ -88,10 +86,7 @@ export default function NewProductForm({ onSuccess }: NewProductFormProps) {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white p-6 max-w-xl"
-    >
+    <form onSubmit={handleSubmit} className="bg-white p-6 max-w-xl">
       <h3 className="text-lg font-semibold mb-4">Ajouter un nouveau produit</h3>
 
       {error && <div className="mb-3 text-sm text-red-600">{error}</div>}
@@ -171,7 +166,11 @@ export default function NewProductForm({ onSuccess }: NewProductFormProps) {
           >
             Annuler
           </Button>
-          <Button type="submit" disabled={loading} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+          >
             {loading ? 'Enregistrement...' : 'Ajouter le produit'}
           </Button>
         </div>

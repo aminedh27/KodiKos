@@ -1,4 +1,3 @@
-// app/supplier-materials/stock/page.tsx
 'use client';
 import React, { useEffect, useState } from 'react';
 import { Product } from '@/types/product';
@@ -66,6 +65,11 @@ import {
   AlertCircle,
   CheckCircle2,
 } from 'lucide-react';
+import {
+  searchProducts,
+  updateQuantity,
+  recordStockMovement,
+} from '@/app/services/products';
 
 type StockMovement = {
   id: string;
@@ -100,8 +104,8 @@ export default function StockPage() {
   async function fetchProducts() {
     setLoading(true);
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
+      const res = await searchProducts('');
+      const data = await res;
       setProducts(data);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -142,33 +146,22 @@ export default function StockPage() {
     const prod = products.find((p) => p.id === id);
     if (!prod) return;
 
-    const newStock = Math.max(0, prod.stock + delta);
+    const newStock = Math.max(
+      0,
+      (typeof prod.quantity === 'number' ? prod.quantity : prod.stock) + delta
+    );
 
     try {
-      const res = await fetch('/api/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'update',
-          product: { id, stock: newStock },
-        }),
+      const updated = await updateQuantity(id, newStock);
+      setProducts((p) => p.map((x) => (x.id === id ? (updated as any) : x)));
+
+      await recordStockMovement({
+        productId: id,
+        type: delta > 0 ? 'in' : 'out',
+        quantity: Math.abs(delta),
+        date: new Date().toISOString(),
+        reason,
       });
-      const json = await res.json();
-
-      if (json?.ok) {
-        setProducts((p) => p.map((x) => (x.id === id ? json.product : x)));
-
-        // Log stock movement (you can save this to your backend)
-        console.log({
-          productId: id,
-          type: delta > 0 ? 'in' : 'out',
-          quantity: Math.abs(delta),
-          date: new Date().toISOString(),
-          reason,
-        });
-      } else {
-        alert('Erreur lors de la mise à jour du stock');
-      }
     } catch (error) {
       console.error('Error updating stock:', error);
       alert('Erreur lors de la mise à jour du stock');
@@ -214,9 +207,12 @@ export default function StockPage() {
   }
 
   const categories = Array.from(new Set(products.map((p) => p.category)));
-  const lowStockCount = products.filter((p) => p.stock <= 10).length;
-  const outOfStockCount = products.filter((p) => p.stock === 0).length;
-  const totalValue = products.reduce((sum, p) => sum + p.price * p.stock, 0);
+  const lowStockCount = products.filter((p) => p.quantity <= 10).length;
+  const outOfStockCount = products.filter((p) => p.quantity === 0).length;
+  const totalValue = products.reduce(
+    (sum, p) => sum + Number(p.price) * Number(p.quantity),
+    0
+  );
 
   if (loading) {
     return (
@@ -449,7 +445,6 @@ export default function StockPage() {
                   filteredProducts.map((product) => {
                     const status = getStockStatus(product.stock);
                     const StatusIcon = status.icon;
-                    const stockValue = product.price * product.stock;
 
                     return (
                       <TableRow
@@ -474,7 +469,7 @@ export default function StockPage() {
                         <TableCell className="text-center">
                           <div className="flex flex-col items-center">
                             <span className="text-lg font-bold text-slate-900">
-                              {product.stock}
+                              {product.quantity}
                             </span>
                             <span className="text-xs text-slate-500">
                               {product.unit}
@@ -493,7 +488,7 @@ export default function StockPage() {
                         <TableCell className="text-right">
                           <div>
                             <p className="font-semibold text-slate-900">
-                              {stockValue.toLocaleString()} DA
+                              {product.price * product.quantity} DA
                             </p>
                             <p className="text-xs text-slate-500">
                               {product.price.toLocaleString()} DA/u

@@ -5,10 +5,11 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  unit: Unit;
+  unit: string;
   price: number; // DA per unit
   stock: number; // quantity in unit
   quantity: number;
   min_quantity: number;
-  updatedAt: string; // ISO date
+  transport_price: number;
+  updatedat: string; // ISO date
 }

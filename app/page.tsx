@@ -1,169 +1,97 @@
 'use client';
-import { Card } from '@/components/ui/card';
-import { BarChart, LineChart, PieChart, Bar, Line, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import Link from 'next/link';
+import { Package, Wrench, Building2 } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Home() {
-  // Sample data for charts
-  const barData = [
-    { name: 'Jan', value: 400 },
-    { name: 'Feb', value: 300 },
-    { name: 'Mar', value: 600 },
-    { name: 'Apr', value: 800 },
-    { name: 'May', value: 500 },
-    { name: 'Jun', value: 900 },
-  ];
-
-  const lineData = [
-    { name: 'Jan', value: 400 },
-    { name: 'Feb', value: 300 },
-    { name: 'Mar', value: 600 },
-    { name: 'Apr', value: 800 },
-    { name: 'May', value: 500 },
-    { name: 'Jun', value: 900 },
-  ];
-
-  const pieData = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
+  const routes = [
+    {
+      title: 'Fournisseur de Matériaux',
+      description: 'Gérez vos matériaux de construction',
+      href: '/supplier-materials',
+      icon: Package,
+      color: 'from-blue-500 to-blue-600',
+      hoverColor: 'hover:from-blue-600 hover:to-blue-700',
+    },
+    {
+      title: "Fournisseur d'Engins",
+      description: 'Gérez vos engins et équipements',
+      href: '/supplier-engines',
+      icon: Wrench,
+      color: 'from-green-500 to-green-600',
+      hoverColor: 'hover:from-green-600 hover:to-green-700',
+    },
+    {
+      title: 'Promoteur',
+      description: 'Gérez vos projets immobiliers',
+      href: '/promoter',
+      icon: Building2,
+      color: 'from-purple-500 to-purple-600',
+      hoverColor: 'hover:from-purple-600 hover:to-purple-700',
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-          Dashboard Overview
-        </h1>
-        <p className="text-slate-600 dark:text-slate-400 mt-2">
-          Key metrics and performance indicators
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
+      {/* Logo Section */}
+      <div className="pt-12 pb-8">
+        <div className="flex justify-center">
+          <Image src="/image.png" alt="Logo" width={100} height={100} />
+        </div>
+        <p className="text-center text-slate-600 dark:text-slate-400 mt-2 text-lg">
+          Choisissez votre espace
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Revenue</h3>
-          <p className="text-2xl font-bold mt-2">$12,345</p>
-          <div className="h-2 mt-4 bg-slate-100 dark:bg-slate-700 rounded-full">
-            <div className="h-full bg-green-500 rounded-full w-3/4"></div>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">Active Users</h3>
-          <p className="text-2xl font-bold mt-2">1,234</p>
-          <div className="h-2 mt-4 bg-slate-100 dark:bg-slate-700 rounded-full">
-            <div className="h-full bg-blue-500 rounded-full w-2/3"></div>
-          </div>
-        </div>
-        
-        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h3 className="text-sm font-medium text-slate-600 dark:text-slate-400">Conversion Rate</h3>
-          <p className="text-2xl font-bold mt-2">23.5%</p>
-          <div className="h-2 mt-4 bg-slate-100 dark:bg-slate-700 rounded-full">
-            <div className="h-full bg-purple-500 rounded-full w-1/2"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h2 className="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-200">Monthly Performance</h2>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="name" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="value" fill="#6366f1" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <Card className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h2 className="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-200">Trend Analysis</h2>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-                <XAxis dataKey="name" stroke="#64748b" />
-                <YAxis stroke="#64748b" />
-                <Tooltip />
-                <Legend />
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke="#10b981" 
-                  strokeWidth={2}
-                  dot={{ fill: '#10b981', r: 4 }}
-                  activeDot={{ fill: '#10b981', r: 6, stroke: '#fff', strokeWidth: 2 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Bottom Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-          <h2 className="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-200">Distribution</h2>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                  label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                />
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-200">Recent Activity</h2>
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((item) => (
-                <div key={item} className="flex items-start gap-3 p-3 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg transition-colors">
-                  <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-                    <span className="text-indigo-600 dark:text-indigo-300 text-sm font-medium">{item}</span>
+      {/* Route Cards */}
+      <div className="max-w-6xl mx-auto px-6 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {routes.map((route) => {
+            const Icon = route.icon;
+            return (
+              <Link key={route.href} href={route.href} className="group">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 dark:border-slate-700 overflow-hidden h-full">
+                  {/* Icon Header */}
+                  <div
+                    className={`bg-gradient-to-br ${route.color} ${route.hoverColor} p-8 transition-all duration-300`}
+                  >
+                    <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform duration-300">
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-medium text-slate-800 dark:text-slate-200">Activity {item}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Description of activity</p>
+
+                  {/* Content */}
+                  <div className="p-6">
+                    <h2 className="text-xl font-bold text-slate-800 dark:text-slate-200 text-center mb-3">
+                      {route.title}
+                    </h2>
+                    <p className="text-slate-600 dark:text-slate-400 text-center text-sm">
+                      {route.description}
+                    </p>
+
+                    {/* Arrow Indicator */}
+                    <div className="mt-6 flex justify-center">
+                      <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center group-hover:bg-slate-200 dark:group-hover:bg-slate-600 transition-colors duration-300">
+                        <svg
+                          className="w-5 h-5 text-slate-600 dark:text-slate-300 group-hover:translate-x-1 transition-transform duration-300"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-slate-200 dark:border-slate-700">
-            <h2 className="text-xl font-semibold mb-4 text-slate-800 dark:text-slate-200">Quick Actions</h2>
-            <div className="grid grid-cols-2 gap-3">
-              {['Report', 'Export', 'Settings', 'Help'].map((action) => (
-                <button 
-                  key={action}
-                  className="p-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors text-sm font-medium text-slate-800 dark:text-slate-200"
-                >
-                  {action}
-                </button>
-              ))}
-            </div>
-          </Card>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>
