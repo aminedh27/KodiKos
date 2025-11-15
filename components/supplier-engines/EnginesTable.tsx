@@ -128,12 +128,12 @@ export default function EnginesTable({
             {engines.map((engine) => (
               <TableRow
                 key={engine.id}
-                className="hover:bg-amber-50/50 transition-colors"
+                className="hover:bg-mariner-50/50 transition-colors"
               >
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-amber-100">
-                      <Truck className="w-5 h-5 text-amber-600" />
+                    <div className="p-2 rounded-lg bg-mariner-100">
+                      <Truck className="w-5 h-5 text-mariner-600" />
                     </div>
                     <div>
                       <p className="font-semibold text-slate-900">
@@ -182,7 +182,7 @@ export default function EnginesTable({
                   ) : (
                     <Badge
                       variant="outline"
-                      className="bg-red-50 text-red-700 border-red-300"
+                      className="bg-red-50 text-danger-700 border-danger-300"
                     >
                       <XCircle className="w-3 h-3 mr-1" />
                       En mission
@@ -195,7 +195,7 @@ export default function EnginesTable({
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 hover:bg-amber-100"
+                        className="h-8 w-8 p-0 hover:bg-mariner-100"
                       >
                         <MoreVertical className="w-4 h-4" />
                       </Button>
@@ -206,7 +206,7 @@ export default function EnginesTable({
                           href={`/supplier-engines/fleet/${engine.id}`}
                           className="cursor-pointer"
                         >
-                          <Eye className="w-4 h-4 mr-2" />
+                          <Eye className="w-4 h-4 mr-2 " />
                           Voir détails
                         </Link>
                       </DropdownMenuItem>

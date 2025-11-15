@@ -52,7 +52,7 @@ export default function MaterialsSidebar() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-b from-white via-slate-50 to-white">
+    <div className="flex flex-col h-full bg-linear-to- from-white via-slate-50 to-white">
       {/* Profile Section */}
       {/* <div className="p-4 border-b border-slate-200">
         <div className="flex items-center gap-3 p-2 rounded-xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100">

@@ -5,5 +5,5 @@ import React from 'react';
 
 export default function Page() {
   // Redirect to default sub-page
-  redirect('/supplier-materials/products');
+  return <ProductsOverview />;
 }

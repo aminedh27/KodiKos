@@ -17,7 +17,7 @@ export default function EnginesHeader() {
         <div className="flex items-center justify-between py-4 gap-4">
           {/* Title Section */}
           <div className="flex items-center gap-3 min-w-0">
-            <div className="p-2.5 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl shadow-lg shadow-amber-500/20">
+            <div className="p-2.5 bg-gradient-to-br from-primary-500 to-mariner-600 rounded-xl shadow-lg shadow-primary-500/20">
               <Truck className="w-5 h-5 text-white" />
             </div>
             <div className="min-w-0">
@@ -42,10 +42,10 @@ export default function EnginesHeader() {
                   </span>
                 </div>
               </div>
-              <div className="px-3 py-1.5 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="px-3 py-1.5 bg-mariner-50 rounded-lg border border-mariner-200">
                 <div className="flex items-center gap-2">
-                  <TrendingUp className="w-3 h-3 text-amber-600" />
-                  <span className="text-xs font-semibold text-amber-700">
+                  <TrendingUp className="w-3 h-3 text-mariner-600" />
+                  <span className="text-xs font-semibold text-mariner-700">
                     +12% ce mois
                   </span>
                 </div>
@@ -68,8 +68,8 @@ export default function EnginesHeader() {
             </DropdownMenu>
 
             <Button
-              size="sm"
-              className="gap-2 bg-amber-500 hover:bg-amber-600 shadow-lg shadow-amber-500/30 hover:shadow-xl hover:shadow-amber-500/40 transition-all"
+              size="lg"
+              className=" bg-primary-500 hover:bg-primary-600 shadow-lg shadow-primary-500/30 hover:shadow-xl hover:shadow-primary-500/40 transition-all flex justify-center items-center"
             >
               <Plus className="w-4 h-4" />
               <span className="hidden sm:inline">Ajouter engin</span>

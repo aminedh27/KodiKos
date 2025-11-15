@@ -233,22 +233,22 @@ export default function MissionsPage() {
     const configs = {
       planned: {
         label: 'Planifiée',
-        color: 'bg-blue-100 text-blue-700 border-blue-300',
+        color: 'bg-primary-100 text-primary-700 border-primary-300',
         icon: Calendar,
       },
       in_progress: {
         label: 'En cours',
-        color: 'bg-green-100 text-green-700 border-green-300',
+        color: 'bg-success-100 text-success-700 border-success-300',
         icon: Activity,
       },
       completed: {
         label: 'Terminée',
-        color: 'bg-slate-100 text-slate-700 border-slate-300',
+        color: 'bg-success-100 text-success-700 border-success-300',
         icon: CheckCircle2,
       },
       cancelled: {
         label: 'Annulée',
-        color: 'bg-red-100 text-red-700 border-red-300',
+        color: 'bg-danger-100 text-danger-700 border-danger-300',
         icon: XCircle,
       },
     };
@@ -343,13 +343,13 @@ export default function MissionsPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm font-medium text-slate-600">Planifiées</p>
-                <h3 className="text-3xl font-bold text-blue-700 mt-2">
+                <h3 className="text-3xl font-bold text-mariner-700 mt-2">
                   {stats.planned}
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">À venir</p>
               </div>
               <div className="p-3 rounded-xl bg-blue-100">
-                <CalendarDays className="w-5 h-5 text-blue-600" />
+                <CalendarDays className="w-5 h-5 text-mariner-600" />
               </div>
             </div>
           </CardContent>
@@ -362,7 +362,7 @@ export default function MissionsPage() {
                 <p className="text-sm font-medium text-slate-600">
                   Taux Utilisation
                 </p>
-                <h3 className="text-3xl font-bold text-amber-700 mt-2">
+                <h3 className="text-3xl font-bold text-success-700 mt-2">
                   {utilizationRate.toFixed(0)}%
                 </h3>
                 <p className="text-xs text-slate-500 mt-1">
@@ -370,7 +370,7 @@ export default function MissionsPage() {
                 </p>
               </div>
               <div className="p-3 rounded-xl bg-emerald-100">
-                <TrendingUp className="w-5 h-5 text-emerald-600" />
+                <TrendingUp className="w-5 h-5 text-success-600" />
               </div>
             </div>
           </CardContent>
@@ -383,7 +383,7 @@ export default function MissionsPage() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <CardTitle className="text-xl">Gestion des Missions</CardTitle>
-              <CardDescription>
+              <CardDescription className="text-secondary-700">
                 Planifiez et suivez vos missions d'engins
               </CardDescription>
             </div>
@@ -403,7 +403,7 @@ export default function MissionsPage() {
               <Button
                 size="sm"
                 onClick={() => setCreateDialogOpen(true)}
-                className="bg-amber-600 hover:bg-amber-700"
+                className="bg-primary-600 hover:bg-primary-700"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Nouvelle Mission
@@ -441,10 +441,10 @@ export default function MissionsPage() {
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="space-y-4"
+            className="space-y-4 "
           >
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="all">
+            <TabsList className="grid w-full grid-cols-4 bg-white border rounded">
+              <TabsTrigger value="all" className="">
                 Toutes
                 <Badge variant="secondary" className="ml-2">
                   {stats.total}
@@ -486,7 +486,7 @@ export default function MissionsPage() {
                   </p>
                   {activeTab === 'all' && (
                     <Button
-                      className="mt-4 bg-amber-600 hover:bg-amber-700"
+                      className="mt-4 bg-primary-600 hover:bg-primary-700"
                       onClick={() => setCreateDialogOpen(true)}
                     >
                       <Plus className="w-4 h-4 mr-2" />

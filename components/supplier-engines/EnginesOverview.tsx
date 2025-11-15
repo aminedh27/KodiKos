@@ -56,7 +56,7 @@ export default function EnginesOverview() {
       change: '+2',
       trend: 'up',
       icon: Truck,
-      color: 'amber',
+      color: 'primary',
       description: 'Dans la flotte',
     },
     {
@@ -65,7 +65,7 @@ export default function EnginesOverview() {
       change: `${utilizationRate.toFixed(0)}%`,
       trend: 'neutral',
       icon: Activity,
-      color: 'green',
+      color: 'danger',
       description: 'Taux utilisation',
     },
     {
@@ -74,7 +74,7 @@ export default function EnginesOverview() {
       change: 'Maintenant',
       trend: 'neutral',
       icon: CheckCircle,
-      color: 'blue',
+      color: 'mariner',
       description: 'Prêts à louer',
     },
     {
@@ -205,12 +205,12 @@ export default function EnginesOverview() {
               {activeMissions.map((mission) => (
                 <div
                   key={mission.id}
-                  className="p-4 rounded-lg border border-slate-200 hover:border-amber-300 hover:bg-amber-50/50 transition-all"
+                  className="p-4 rounded-lg border border-secondary-200 hover:border-mariner-300 hover:bg-mariner-50/60 transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 rounded-lg bg-amber-100">
-                        <Truck className="w-5 h-5 text-amber-600" />
+                      <div className="p-2 rounded-lg bg-mariner-100">
+                        <Truck className="w-5 h-5 text-mariner-600" />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm text-slate-900">
@@ -283,17 +283,17 @@ export default function EnginesOverview() {
               })}
             </div>
 
-            <div className="mt-6 p-3 rounded-lg bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
+            <div className="mt-6 p-3 rounded-lg bg-gradient-to-br from-secondary-50 to-mariner-50 border border-secondary-200">
               <div className="flex items-center gap-2 mb-2">
-                <Activity className="w-4 h-4 text-amber-600" />
-                <span className="text-xs font-semibold text-amber-900">
+                <Activity className="w-4 h-4 text-success-400" />
+                <span className="text-xs font-semibold text-success-500">
                   Taux d'utilisation
                 </span>
               </div>
-              <div className="text-2xl font-bold text-amber-900">
+              <div className="text-2xl font-bold text-success-500">
                 {utilizationRate.toFixed(1)}%
               </div>
-              <p className="text-xs text-amber-700 mt-1">
+              <p className="text-xs text-success-500 mt-1">
                 Performance mensuelle
               </p>
             </div>
@@ -303,17 +303,17 @@ export default function EnginesOverview() {
 
       {/* Maintenance Alert */}
       {maintenanceNeeded.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50/50">
+        <Card className="border-primary-200 bg-primary-50/50">
           <CardHeader>
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-amber-100">
-                <Wrench className="w-5 h-5 text-amber-600" />
+              <div className="p-2 rounded-lg bg-primary-100">
+                <Wrench className="w-5 h-5 text-primary-600" />
               </div>
               <div>
-                <CardTitle className="text-lg text-amber-900">
+                <CardTitle className="text-lg text-mariner-900">
                   Maintenance Requise
                 </CardTitle>
-                <CardDescription className="text-amber-700">
+                <CardDescription className="text-mariner-700">
                   {maintenanceNeeded.length} engin
                   {maintenanceNeeded.length > 1 ? 's' : ''} nécessite
                   {maintenanceNeeded.length > 1 ? 'nt' : ''} une révision
@@ -326,10 +326,10 @@ export default function EnginesOverview() {
               {maintenanceNeeded.map((engine) => (
                 <div
                   key={engine.id}
-                  className="flex items-center gap-3 p-4 rounded-lg bg-white border border-amber-200"
+                  className="flex items-center gap-3 p-4 rounded-lg bg-white border border-primary-200"
                 >
-                  <div className="p-3 rounded-lg bg-amber-100">
-                    <Truck className="w-6 h-6 text-amber-600" />
+                  <div className="p-3 rounded-lg bg-primary-100">
+                    <Truck className="w-6 h-6 text-primary-600" />
                   </div>
                   <div className="flex-1">
                     <h4 className="font-semibold text-sm text-slate-900">
@@ -338,7 +338,7 @@ export default function EnginesOverview() {
                     <p className="text-xs text-slate-600">{engine.category}</p>
                     <Badge
                       variant="outline"
-                      className="mt-2 text-[10px] border-amber-300 text-amber-700"
+                      className="mt-2 text-[10px] border-primary-300 text-primary-700"
                     >
                       <Clock className="w-3 h-3 mr-1" />
                       Dans 5 jours
@@ -347,7 +347,7 @@ export default function EnginesOverview() {
                 </div>
               ))}
             </div>
-            <Button className="w-full mt-4 bg-amber-600 hover:bg-amber-700">
+            <Button className="w-full mt-4 bg-primary-600 hover:bg-primary-700">
               <Wrench className="w-4 h-4 mr-2" />
               Planifier maintenance
             </Button>
@@ -364,7 +364,7 @@ export default function EnginesOverview() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <Button
               onClick={() => (location.href = '/supplier-engines/fleet')}
-              className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700"
+              className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700"
             >
               <Plus className="w-5 h-5" />
               <span>Ajouter Engin</span>
@@ -372,21 +372,21 @@ export default function EnginesOverview() {
             <Button
               onClick={() => (location.href = '/supplier-engines/missions')}
               variant="outline"
-              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-amber-50 hover:border-amber-300"
+              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-primary-50 hover:border-primary-300"
             >
-              <Calendar className="w-5 h-5 text-amber-600" />
-              <span className="text-amber-700">Nouvelle Mission</span>
+              <Calendar className="w-5 h-5 text-primary-600" />
+              <span className="text-primary-700">Nouvelle Mission</span>
             </Button>
             <Button
               variant="outline"
-              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-slate-50"
+              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-danger-500"
             >
               <Wrench className="w-5 h-5" />
               <span>Maintenance</span>
             </Button>
             <Button
               variant="outline"
-              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-slate-50"
+              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-primary-500"
             >
               <DollarSign className="w-5 h-5" />
               <span>Facturation</span>
@@ -414,11 +414,11 @@ export default function EnginesOverview() {
             {engines.slice(0, 8).map((engine) => (
               <div
                 key={engine.id}
-                className="p-4 rounded-lg border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all cursor-pointer"
+                className="p-4 rounded-lg border border-secondary-200 hover:border-secondary-300 hover:shadow-md transition-all cursor-pointer"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-amber-100">
-                    <Truck className="w-5 h-5 text-amber-600" />
+                  <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-mariner-100">
+                    <Truck className="w-5 h-5 text-mariner-600" />
                   </div>
                   <Badge
                     variant={engine.available ? 'default' : 'secondary'}
@@ -436,7 +436,7 @@ export default function EnginesOverview() {
                 </h4>
                 <p className="text-xs text-slate-500 mb-3">{engine.category}</p>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-bold text-amber-600">
+                  <p className="text-sm font-bold text-secondary-800">
                     {engine.dayRate.toLocaleString()} DA
                   </p>
                   <p className="text-xs text-slate-500">/jour</p>
