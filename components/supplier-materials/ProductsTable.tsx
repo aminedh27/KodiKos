@@ -1,7 +1,7 @@
 // components/supplier-materials/ProductsTable.tsx
 'use client';
 import React, { useState } from 'react';
-import { Product } from '@/types/product';
+import { FullProduct } from '@/app/services/products';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Box } from 'lucide-react';
@@ -16,11 +16,12 @@ export default function ProductsTable({
   products,
   loading,
 }: {
-  products: Product[];
+  products: FullProduct[];
   loading: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
+  console.log(products);
   if (loading) return (
     <div className="flex flex-col items-center justify-center p-8">
       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-4"></div>
@@ -79,14 +80,14 @@ export default function ProductsTable({
               <td className="py-3 px-4">{p.price.toLocaleString()}</td>
               <td className="py-3 px-4">
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                  p.stock > 10 ? 'bg-green-100 text-green-800' : 
-                  p.stock > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
+                  p.quantity > 10 ? 'bg-green-100 text-green-800' : 
+                  p.quantity > 0 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'
                 }`}>
-                  {p.stock} {p.unit}
+                  {p.quantity} {p.unit}
                 </span>
               </td>
               <td className="py-3 px-4 text-slate-500">
-                {new Date(p.updatedAt).toLocaleDateString()}
+                {new Date(p.updatedat).toLocaleDateString()}
               </td>
               <td className="py-3 px-4">
                 <div className="flex justify-end gap-2">

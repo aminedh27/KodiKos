@@ -8,35 +8,32 @@ import { Box } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { getProductById, updateProductById } from '@/app/services/products';
+import { FullProduct } from '@/types/supabase';
 
 export default function ProductDetailClient() {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<FullProduct | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
   const [price, setPrice] = useState<number>(0);
   const [stock, setStock] = useState<number>(0);
+  const [quantity, setQuantity] = useState<number>(0);
+  const [minQuantity, setMinQuantity] = useState<number>(0);
+  const [transportPrice, setTransportPrice] = useState<number>(0);
+  const [name, setName] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [unit, setUnit] = useState<string>('');
   const router = useRouter();
   const { id } = useParams() as { id: string };
 
-  useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      router.push('/supplier-materials/products');
-      return;
-    }
-
-    let mounted = true;
-    async function fetchProduct() {
+  async function fetchProduct(mounted: boolean) {
       setLoading(true);
       try {
-        const res = await fetch(`/api/products?id=${encodeURIComponent(id)}`);
-        if (!res.ok) {
-          setProduct(null);
-          return;
-        }
-        const json = await res.json();
+        console.log('fetching product', id);
+        const product: FullProduct | null = await getProductById(id);
+
         if (mounted) {
-          if (json?.ok) setProduct(json.product);
+          if (product) setProduct(product);
           else setProduct(null);
         }
       } catch (err) {
@@ -46,7 +43,16 @@ export default function ProductDetailClient() {
         if (mounted) setLoading(false);
       }
     }
-    fetchProduct();
+  useEffect(() => {
+    if (!id) {
+      setLoading(false);
+      router.push('/supplier-materials/products');
+      return;
+    }
+
+    let mounted = true;
+    
+    fetchProduct(mounted);
     return () => {
       mounted = false;
     };
@@ -54,28 +60,38 @@ export default function ProductDetailClient() {
 
   useEffect(() => {
     if (product) {
+      console.log('product', product);
       setPrice(product.price);
-      setStock(product.stock);
+      setTransportPrice(product.transport_price);
+      setQuantity(product.quantity);
+      setMinQuantity(product.min_quantity);
+      setStock(product.quantity);
+      setName(product.name);
+      setCategory(product.category);
+      setUnit(product.unit);
     }
   }, [product]);
 
   async function save() {
     if (!product) return;
-    const res = await fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        action: 'update',
-        product: { id: product.id, price, stock },
-      }),
+    await updateProductById(product.id, {
+      name,
+      category,
+      unit,
+      price,
+      transport_price: transportPrice,
+      quantity,
+      min_quantity: minQuantity,
     });
-    const json = await res.json();
-    if (json?.ok) {
-      setProduct(json.product);
-      setEditing(false);
-    } else {
-      toast.error('Erreur mise à jour');
+    if (product) {
+      fetchProduct(true);
+      toast.success('Produit modifié');
     }
+
+    if (!product) {
+      toast.error("Produit non trouvé");
+    }
+    setEditing(false);
   }
 
   if (loading) return (
@@ -139,12 +155,12 @@ export default function ProductDetailClient() {
           <div>
             <div className="text-sm text-slate-500 mb-1">Stock</div>
             <div className="text-xl font-semibold">
-              {product.stock} {product.unit}
+              {product.quantity} {product.unit}
             </div>
           </div>
         </div>
         <div className="text-xs text-slate-400 mt-4">
-          Dernière mise à jour: {new Date(product.updatedAt).toLocaleString()}
+          Dernière mise à jour: {new Date(product.updatedat).toLocaleString()}
         </div>
       </div>
 
@@ -152,6 +168,38 @@ export default function ProductDetailClient() {
         <DialogContent className="sm:max-w-[600px]">
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Modifier le produit</h3>
+            <div>
+              <label className="text-sm block mb-1">Nom</label>
+              <input
+                type="text"
+                className="w-full border rounded-md px-3 py-2"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm block mb-1">Category</label>
+              <input
+                type="text"
+                className="w-full border rounded-md px-3 py-2"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-sm block mb-1">Unité</label>
+              <select
+                className="w-full border rounded-md px-3 py-2 bg-white"
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+              >
+                <option value="kg">kg</option>
+                <option value="sac">sac</option>
+                <option value="ton">ton</option>
+                <option value="m3">m3</option>
+                <option value="piece">piece</option>
+              </select>
+            </div>
             <div>
               <label className="text-sm block mb-1">Prix (DA)</label>
               <input
@@ -162,12 +210,31 @@ export default function ProductDetailClient() {
               />
             </div>
             <div>
-              <label className="text-sm block mb-1">Stock</label>
+              <label className="text-sm block mb-1">Transport Price (DA)</label>
               <input
                 type="number"
                 className="w-full border rounded-md px-3 py-2"
-                value={stock}
-                onChange={(e) => setStock(Number(e.target.value))}
+                value={transportPrice}
+                onChange={(e) => setTransportPrice(Number(e.target.value))}
+              />
+            </div>
+            
+            <div>
+              <label className="text-sm block mb-1">Quantity</label>
+              <input
+                type="number"
+                className="w-full border rounded-md px-3 py-2"
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label className="text-sm block mb-1">Min Quantity</label>
+              <input
+                type="number"
+                className="w-full border rounded-md px-3 py-2"
+                value={minQuantity}
+                onChange={(e) => setMinQuantity(Number(e.target.value))}
               />
             </div>
             <div className="flex justify-end gap-2 pt-2">

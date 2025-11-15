@@ -2,24 +2,23 @@
 
 import React, { useEffect, useState } from 'react';
 import ProductsTable from '@/components/supplier-materials/ProductsTable';
-import { Product } from '@/types/product';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Dialog, DialogTrigger, DialogContent } from '@/components/ui/dialog';
 import NewProductForm from '@/components/supplier-materials/NewProductForm';
 import { toast } from 'sonner';
+import { searchProducts, FullProduct } from '@/app/services/products';
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<FullProduct[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [open, setOpen] = useState(false);
 
   async function fetchProducts() {
     setLoading(true);
     try {
-      const res = await fetch('/api/products');
-      const data = await res.json();
-      setProducts(data);
+      const products = await searchProducts('');
+      setProducts(products);
     } catch (err) {
       console.error('fetch products error', err);
     } finally {
@@ -32,7 +31,7 @@ export default function ProductsPage() {
   }, []);
 
   // Handlers must be defined in client component (so they can be passed)
-  function handleEdit(product: Product) {
+  function handleEdit(product: FullProduct) {
     // open modal or navigate to edit page
     // for demo we'll navigate to product detail/edit page if exists
     // or just alert
@@ -40,7 +39,7 @@ export default function ProductsPage() {
     toast.success(`Modifier: ${product.name}`);
   }
 
-  function handleDevis(product: Product) {
+  function handleDevis(product: FullProduct) {
     // open devis modal or navigate
     toast.success(`Générer devis pour: ${product.name}`);
   }

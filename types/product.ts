@@ -8,5 +8,7 @@ export interface Product {
   unit: Unit;
   price: number; // DA per unit
   stock: number; // quantity in unit
+  quantity: number;
+  min_quantity: number;
   updatedAt: string; // ISO date
 }
