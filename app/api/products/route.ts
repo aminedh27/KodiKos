@@ -11,6 +11,8 @@ let PRODUCTS: Product[] = [
     price: 8500,
     stock: 120,
     updatedAt: new Date().toISOString(),
+    quantity: 120,
+    min_quantity: 120,
   },
   {
     id: 'p2',
@@ -20,6 +22,8 @@ let PRODUCTS: Product[] = [
     price: 99000,
     stock: 25,
     updatedAt: new Date().toISOString(),
+    quantity: 25,
+    min_quantity: 25,
   },
   {
     id: 'p3',
@@ -29,6 +33,8 @@ let PRODUCTS: Product[] = [
     price: 2000,
     stock: 500,
     updatedAt: new Date().toISOString(),
+    quantity: 500,
+    min_quantity: 500,
   },
 ];
 
