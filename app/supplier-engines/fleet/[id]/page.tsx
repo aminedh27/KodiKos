@@ -2,10 +2,10 @@
 import React from 'react';
 import EngineDetailClient from '@/components/supplier-engines/EngineDetailClient';
 
-export default function Page({ params }: { params: { id: string } }) {
+export default function Page() {
   return (
     <section>
-      <EngineDetailClient id={params.id} />
+      <EngineDetailClient />
     </section>
   );
 }

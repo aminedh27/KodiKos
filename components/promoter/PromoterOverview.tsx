@@ -56,7 +56,7 @@ export default function PromoterOverview() {
       change: '+12%',
       trend: 'up',
       icon: Package,
-      color: 'teal',
+      color: 'primary',
       description: 'vs mois dernier',
     },
     {
@@ -65,7 +65,7 @@ export default function PromoterOverview() {
       change: '+8%',
       trend: 'up',
       icon: Truck,
-      color: 'amber',
+      color: 'secondary',
       description: 'vs mois dernier',
     },
     {
@@ -74,7 +74,7 @@ export default function PromoterOverview() {
       change: 'Nouveau',
       trend: 'neutral',
       icon: Calculator,
-      color: 'emerald',
+      color: 'mariner',
       description: 'Outils disponibles',
     },
     {
@@ -83,7 +83,7 @@ export default function PromoterOverview() {
       change: '+2',
       trend: 'up',
       icon: Layers,
-      color: 'indigo',
+      color: 'success',
       description: 'Cette semaine',
     },
   ];
@@ -336,7 +336,7 @@ export default function PromoterOverview() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <Button
               onClick={() => (location.href = '/promoter/index-materials')}
-              className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700"
+              className="h-auto py-4 flex-col gap-2 bg-gradient-to-br from-primary-500 to-mariner-600 hover:from-primary-600 hover:to-mariner-700"
             >
               <Package className="w-5 h-5" />
               <span>Index Matériaux</span>
@@ -353,18 +353,18 @@ export default function PromoterOverview() {
                 (location.href = '/promoter/index-materials/compare')
               }
               variant="outline"
-              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-indigo-50 hover:border-indigo-300"
+              className="h-auto py-4 flex-col gap-2 border-2 hover:bg-success-50 hover:border-success-300"
             >
-              <Calculator className="w-5 h-5 text-indigo-600" />
-              <span className="text-indigo-700">Comparer Prix</span>
+              <Calculator className="w-5 h-5 text-success-600" />
+              <span className="text-success-700">Comparer Prix</span>
             </Button>
             <Button
               onClick={() => (location.href = '/promoter/projects')}
               variant="outline"
               className="h-auto py-4 flex-col gap-2 border-2 hover:bg-slate-50"
             >
-              <Layers className="w-5 h-5" />
-              <span>Mes Projets</span>
+              <Layers className="w-5 h-5 text-success-600" />
+              <span className="text-success-700">Mes Projets</span>
             </Button>
           </div>
         </CardContent>

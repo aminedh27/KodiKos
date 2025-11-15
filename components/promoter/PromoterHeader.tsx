@@ -9,11 +9,11 @@ export default function PromoterHeader() {
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-4 md:p-6">
         {/* Title Section */}
         <div className="flex items-start gap-3">
-          <div className="p-2 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-lg">
-            <TrendingUp className="w-6 h-6 text-teal-600" />
+          <div className="p-2 bg-gradient-to-br from-primary-50 to-mariner-50 rounded-lg">
+            <TrendingUp className="w-6 h-6 text-primary-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+            <h1 className="text-xl font-bold text-slate-800 bg-gradient-to-r from-primary-600 to-mariner-600 bg-clip-text text-transparent">
               Promoteur — Index & Comparateur
             </h1>
             <p className="text-sm text-slate-600 mt-1">
@@ -24,7 +24,7 @@ export default function PromoterHeader() {
 
         {/* Location Badge */}
         <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-lg border border-slate-200">
-          <MapPin className="w-4 h-4 text-teal-600" />
+          <MapPin className="w-4 h-4 text-primary-600" />
           <div className="text-sm">
             <span className="text-slate-600">Ville: </span>
             <strong className="text-slate-800">Alger</strong>

@@ -11,7 +11,7 @@ export default function SupplierEnginesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-amber-50">
+    <div className="min-h-screen">
       <div className="flex">
         <aside className="w-64 hidden md:block border-r bg-white">
           <EnginesSidebar />

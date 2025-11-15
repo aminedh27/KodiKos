@@ -5,8 +5,9 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import ScanSimulator from './ScanSimulator';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
 
-export default function EngineDetailClient({ id }: { id?: string }) {
+export default function EngineDetailClient() {
   const [engine, setEngine] = useState<Engine | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -15,12 +16,13 @@ export default function EngineDetailClient({ id }: { id?: string }) {
   const [scanOpen, setScanOpen] = useState(false);
   const [synced, setSynced] = useState(false);
   const router = useRouter();
+  const { id } = useParams();
 
   async function fetchEngine() {
     if (!id) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/engines?id=${encodeURIComponent(id)}`);
+      const res = await fetch(`/api/engines?id=${id}`);
       const json = await res.json();
       if (json?.ok) setEngine(json.engine);
       else setEngine(null);

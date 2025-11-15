@@ -7,9 +7,9 @@ export default function MaterialDetailClient() {
   const [item, setItem] = useState<any | null>(null);
   const [loading, setLoading] = useState(true);
   const [suppliers, setSuppliers] = useState<any[]>([]);
+  const params = useParams();
 
   useEffect(() => {
-    const params = useParams();
     const id = params.id;
     if (!id) {
       setLoading(false);

@@ -12,6 +12,8 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 const navigationItems = [
   {
@@ -35,7 +37,7 @@ const navigationItems = [
 ];
 
 export default function EnginesSidebar() {
-  const pathname = '/supplier-engines'; // Mock - use usePathname() in actual implementation
+  const pathname = usePathname(); // Mock - use usePathname() in actual implementation
 
   const isActive = (href: string) => {
     if (href === '/supplier-engines') {
@@ -47,24 +49,15 @@ export default function EnginesSidebar() {
   return (
     <div className="flex flex-col h-full bg-gradient-to-b from-white via-amber-50/30 to-white">
       {/* Profile Section */}
-      <div className="p-4 border-b border-slate-200">
-        <div className="flex items-center gap-3 p-2 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-100">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 text-white grid place-items-center font-bold shadow-lg shadow-amber-500/30">
-            E
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-sm font-bold text-slate-900">Fournisseur</div>
-            <div className="text-xs text-amber-600 font-medium">Engins</div>
-          </div>
-          <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        </div>
+      <div className="px-4 py-5 border-b-2 border-slate-200 flex justify-center items-center">
+        <Image src="/image.png" alt="Logo" width={160} height={160} />
       </div>
 
       {/* Alert Card */}
       <div className="p-4">
-        <Alert className="border-amber-200 bg-amber-50">
-          <AlertCircle className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-xs text-amber-800">
+        <Alert className="border-danger-200 bg-danger-50">
+          <AlertCircle className="h-4 w-4 text-danger-600" />
+          <AlertDescription className="text-xs text-danger-800">
             <strong>2 engins</strong> nécessitent une maintenance
           </AlertDescription>
         </Alert>
@@ -83,15 +76,15 @@ export default function EnginesSidebar() {
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group ${
                     active
-                      ? 'bg-amber-50 text-amber-700 shadow-sm border border-amber-100'
+                      ? 'bg-primary-50 text-primary-700 shadow-sm border border-primary-100'
                       : 'text-slate-700 hover:bg-white hover:shadow-sm'
                   }`}
                 >
                   <Icon
                     className={`w-4 h-4 transition-all duration-200 ${
                       active
-                        ? 'text-amber-600'
-                        : 'text-slate-500 group-hover:text-amber-600'
+                        ? 'text-primary-600'
+                        : 'text-slate-500 group-hover:text-primary-600'
                     }`}
                   />
                   <span
@@ -106,7 +99,7 @@ export default function EnginesSidebar() {
                       variant="secondary"
                       className={`text-[10px] px-1.5 ${
                         active
-                          ? 'bg-amber-100 text-amber-700'
+                          ? 'bg-primary-100 text-primary-700'
                           : 'bg-slate-100 text-slate-600'
                       }`}
                     >
